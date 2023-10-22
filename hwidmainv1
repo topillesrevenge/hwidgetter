@@ -1,0 +1,64 @@
+local UserInputService = game:GetService("UserInputService")
+
+function setclipboard(text)
+   local screenGui = Instance.new("ScreenGui")
+
+   local textField = Instance.new("TextBox")
+   textField.Text = text
+   textField.Parent = screenGui
+   textField.Size = UDim2.new(1, 0, 0.5, 0)
+   textField.Position = UDim2.new(0, 0, 0.5, 0)
+   textField.BackgroundTransparency = 0.5
+   textField.BackgroundColor3 = Color3.new(0, 0, 0)
+   textField.BorderSizePixel = 0
+   textField.TextColor3 = Color3.new(1, 1, 1)
+   textField.TextScaled = true
+   textField.ZIndex = 1
+
+   local prompt = Instance.new("TextLabel")
+   prompt.Text = "Click on the text, CTRL+A to highlight then Ctrl+C to copy"
+   prompt.Size = UDim2.new(1, 0, 0.5, 0)
+   prompt.BackgroundTransparency = 0.5
+   prompt.BackgroundColor3 = Color3.new(0, 0, 0)
+   prompt.BorderSizePixel = 0
+   prompt.TextScaled = true
+   prompt.TextColor3 = Color3.new(1, 1, 1)
+   prompt.Parent = screenGui
+   prompt.ZIndex = 2
+
+   local onDeselect = function()
+       textField:CaptureFocus()
+       textField.Text = text
+       textField.SelectionStart = #textField.Text + 1
+       textField.CursorPosition = 0
+   end
+
+   UserInputService.InputEnded:Connect(function(input)
+       if input:IsModifierKeyDown(Enum.ModifierKey.Ctrl) and input.KeyCode == Enum.KeyCode.C then
+           screenGui:Destroy()
+       end
+   end)
+
+   textField.FocusLost:Connect(function()
+       onDeselect()
+   end)
+   textField:GetPropertyChangedSignal("Text"):Connect(function()
+       if textField.Text ~= text then
+           onDeselect()
+       end
+   end)
+
+   screenGui.Parent = game.CoreGui
+   onDeselect()
+end
+
+
+
+local http_request = request;
+
+local body = http_request({Url = 'https://httpbin.org/get'; Method = 'GET'}).Body;
+local decoded = game:GetService('HttpService'):JSONDecode(body)
+local hwid = decoded.headers["Flux-Fingerprint"]
+
+
+setclipboard(hwid)
