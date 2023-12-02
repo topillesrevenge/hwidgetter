@@ -54,11 +54,7 @@ end
 
 
 
-local http_request = request;
-
-local body = http_request({Url = 'https://httpbin.org/get'; Method = 'GET'}).Body;
-local decoded = game:GetService('HttpService'):JSONDecode(body)
-local hwid = decoded.headers["Flux-Fingerprint"]
+local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
 
 
 setclipboard(hwid)
